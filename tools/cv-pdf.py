@@ -14,6 +14,7 @@ Options:
     --out PATH       where to write the PDF (default: static/cv.pdf)
     --hugo PATH      the hugo command (default: hugo, or $HUGO)
     --browser PATH   Chrome, Edge or Chromium (default: found automatically, or $CHROME)
+    --no-sandbox     run the browser without its sandbox (needed in some CI and Docker setups)
     --               everything after this is passed to hugo, e.g. -- --themesDir ../..
 
 Requires Python 3.8+, Hugo and a Chromium-based browser. No other packages.
@@ -94,6 +95,7 @@ def main():
     parser.add_argument("--out", default=os.path.join("static", "cv.pdf"))
     parser.add_argument("--hugo", default=os.environ.get("HUGO", "hugo"))
     parser.add_argument("--browser", default=None)
+    parser.add_argument("--no-sandbox", action="store_true")
     args, hugo_args = parser.parse_known_args()
     hugo_args = [a for a in hugo_args if a != "--"]
 
@@ -134,8 +136,8 @@ def main():
                    f"--user-data-dir={profile_dir}", "--no-pdf-header-footer",
                    "--run-all-compositor-stages-before-draw", "--virtual-time-budget=10000",
                    f"--print-to-pdf={out}", base + "cv/"]
-            if hasattr(os, "geteuid") and os.geteuid() == 0:
-                cmd.insert(1, "--no-sandbox")  # Chrome refuses to run sandboxed as root (e.g. in Docker)
+            if args.no_sandbox or (hasattr(os, "geteuid") and os.geteuid() == 0):
+                cmd.insert(1, "--no-sandbox")  # e.g. GitHub's Ubuntu runners, or as root in Docker
             if os.path.exists(out):
                 os.remove(out)
             subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=120)

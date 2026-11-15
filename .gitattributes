@@ -1,0 +1,12 @@
+# Keep text files with LF line endings on every system, so the site builds to the same
+# files on Windows, macOS and Linux.
+* text=auto eol=lf
+
+# Binary files: never convert.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.pdf binary
+*.woff2 binary

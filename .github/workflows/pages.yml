@@ -1,0 +1,72 @@
+# Builds the example site (the theme's demo) on GitHub and publishes it to GitHub Pages.
+# One-time setup: in the repository's Settings → Pages → Build and deployment,
+# set Source to "GitHub Actions".
+name: Deploy the example site to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:   # run it by hand from the Actions tab
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deployment at a time; don't cancel a deployment that is already running.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      HUGO_VERSION: 0.154.5
+    steps:
+      - name: Install Hugo
+        run: |
+          wget -q -O "${{ runner.temp }}/hugo.deb" \
+            "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_linux-amd64.deb"
+          sudo dpkg -i "${{ runner.temp }}/hugo.deb"
+          hugo version
+
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      # Regenerates exampleSite/static/cv.pdf with the theme's tool (Python and Chrome are
+      # already on the runner). If it fails, the committed PDF is used instead.
+      - name: Make the PDF CV
+        continue-on-error: true
+        working-directory: exampleSite
+        run: python3 ../tools/cv-pdf.py --no-sandbox -- --themesDir ../.. --baseURL "${{ steps.pages.outputs.base_url }}/"
+
+      - name: Build the site
+        working-directory: exampleSite
+        env:
+          HUGO_ENVIRONMENT: production
+        run: hugo --gc --minify --themesDir ../.. --baseURL "${{ steps.pages.outputs.base_url }}/"
+
+      - name: Upload
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: exampleSite/public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
