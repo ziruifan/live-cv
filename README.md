@@ -4,7 +4,7 @@
 
 ## Demo
 
-A live demo, built from [exampleSite](exampleSite) and featuring the fictional Evander Grimveil, is hosted on [GitHub Pages](https://ziruifan.github.io/hugo-theme-live-cv).
+A live demo, built from [exampleSite](exampleSite) and featuring the fictional Evander Grimveil, is hosted on [GitHub Pages](https://ziruifan.github.io/live-cv).
 
 ![Preview](images/preview.png)
 
@@ -28,10 +28,10 @@ Hugo **0.146.0** or later (the standard edition is enough).
 From the root of your Hugo site:
 
 ```bash
-git submodule add https://github.com/ziruifan/hugo-theme-live-cv.git themes/hugo-theme-live-cv
+git submodule add https://github.com/ziruifan/live-cv.git themes/live-cv
 ```
 
-Then set `theme = 'hugo-theme-live-cv'` in your `hugo.toml`.
+Then set `theme = 'live-cv'` in your `hugo.toml`.
 
 To preview the example site from inside the theme folder:
 
@@ -65,7 +65,7 @@ hugo server --themesDir ../..
 
 ```toml
 title = 'Your Name'
-theme = 'hugo-theme-live-cv'
+theme = 'live-cv'
 copyright = 'Copyright © {year} Your Name'   # {year} is replaced with the current year
 
 [params]
@@ -298,7 +298,7 @@ The "Download PDF" link at the top of the home page uses, in order:
 **Making `static/cv.pdf`.** Hugo can't write PDFs, so the theme comes with a small script that builds your site, opens `cv/` in a headless Chrome, Edge or Chromium, and prints it. It needs Python 3.8 or later and one of those browsers, nothing else. From the root of your site:
 
 ```bash
-python themes/hugo-theme-live-cv/tools/cv-pdf.py
+python themes/live-cv/tools/cv-pdf.py
 ```
 
 Then build or deploy as usual; the home page links to the new PDF. Run it again whenever your CV changes. Arguments after `--` go to Hugo (e.g. `-- --environment production`); `--out` changes the file and `--browser` points to a browser that isn't found automatically.
@@ -307,7 +307,7 @@ To keep the PDF up to date on GitHub Pages, add a step before the Hugo build in 
 
 ```yaml
 - name: Make the PDF CV
-  run: python3 themes/hugo-theme-live-cv/tools/cv-pdf.py
+  run: python3 themes/live-cv/tools/cv-pdf.py
 ```
 
 ## Translation

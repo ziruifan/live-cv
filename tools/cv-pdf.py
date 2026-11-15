@@ -8,7 +8,7 @@ link on the home page then points to it (unless you set params.pdf yourself).
 
 Run it from the root of your Hugo site:
 
-    python themes/hugo-theme-live-cv/tools/cv-pdf.py
+    python themes/live-cv/tools/cv-pdf.py
 
 Options:
     --out PATH       where to write the PDF (default: static/cv.pdf)
@@ -61,14 +61,26 @@ def find_browser(explicit=None):
     return None
 
 
-class QuietHandler(http.server.SimpleHTTPRequestHandler):
+class SiteHandler(http.server.SimpleHTTPRequestHandler):
+    """Serves the built site from the server root, even when its baseURL has a path
+    (e.g. https://example.github.io/live-cv/): a request for /live-cv/css/main.css is answered
+    with css/main.css when no file exists at the full path."""
+
+    def translate_path(self, path):
+        full = super().translate_path(path)
+        parts = path.split("?", 1)[0].split("#", 1)[0].strip("/").split("/")
+        while not os.path.exists(full) and len(parts) > 1:
+            parts = parts[1:]
+            full = super().translate_path("/" + "/".join(parts))
+        return full
+
     def log_message(self, *args):
         pass
 
 
 def serve(directory):
     """Serve a directory on a free local port in a background thread. Returns (server, port)."""
-    handler = functools.partial(QuietHandler, directory=directory)
+    handler = functools.partial(SiteHandler, directory=directory)
     server = socketserver.ThreadingTCPServer(("127.0.0.1", 0), handler)
     server.daemon_threads = True
     threading.Thread(target=server.serve_forever, daemon=True).start()
@@ -99,9 +111,9 @@ def main():
         server, port = serve(site_dir)
         base = f"http://127.0.0.1:{port}/"
         try:
-            # 1. Build the site for the local server.
+            # 1. Build the site with its own baseURL, so links in the PDF point to the real site.
             print(f"cv-pdf: building the site with {os.path.basename(hugo)} ...")
-            cmd = [hugo, "--destination", site_dir, "--baseURL", base, "--quiet"] + hugo_args
+            cmd = [hugo, "--destination", site_dir, "--quiet"] + hugo_args
             if subprocess.run(cmd).returncode != 0:
                 sys.exit("cv-pdf: hugo failed.")
             if not os.path.isfile(os.path.join(site_dir, "cv", "index.html")):
