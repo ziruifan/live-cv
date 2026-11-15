@@ -48,10 +48,13 @@
   {{- with $more }}
 <section class="more">
   <h2 class="kicker more-title">{{ i18n "moreProjects" }}</h2>
-  <div class="mini-cards">
-    {{- range . }}
-    {{ partial "project/mini.html" . }}
-    {{- end }}
+  {{- /* The same cards as the side projects on the home page. */}}
+  <div class="project-list">
+    <div class="project-cards">
+      {{- range . }}
+      {{ partial "project/card.html" (dict "page" . "level" 3) }}
+      {{- end }}
+    </div>
   </div>
 </section>
   {{- end }}

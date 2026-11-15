@@ -763,32 +763,6 @@ img { max-width: 100%; height: auto; }
   font-size: 12px;
 }
 
-/* "More projects": always a third of the row, however many there are (full width when narrow) */
-.mini-cards {
-  container-type: inline-size;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px 28px;
-}
-
-.mini-card {
-  flex: 0 0 100%;
-  min-width: 0;
-}
-
-@container (min-width: 560px) {
-  .mini-card { flex-basis: calc((100% - 56px) / 3); }
-}
-
-.mini-card-title {
-  margin: 10px 0 0;
-  font-weight: 700;
-  font-size: 16px;
-  line-height: 1.25;
-}
-
-.mini-card .meta { margin-top: 6px; }
-
 /* ---- Articles (project and news pages) ------------------------------------ */
 
 .article-head {
@@ -997,7 +971,7 @@ img { max-width: 100%; height: auto; }
   .paper { box-shadow: none; padding: 0; }
   .topbar, .colophon, .section-more, .navbar, .scroll-buttons { display: none; }
 
-  .item, .pub, .news-row, .project-card, .mini-card, .people-grid > div {
+  .item, .pub, .news-row, .project-card, .people-grid > div {
     break-inside: avoid;
   }
 
