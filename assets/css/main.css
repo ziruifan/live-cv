@@ -709,8 +709,6 @@ img { max-width: 100%; height: auto; }
   object-fit: cover;
 }
 
-.figure-img--wide { aspect-ratio: 16 / 9; }
-
 /* Secondary stories: cards with the photo at the bottom */
 .project-cards {
   display: flex;
@@ -765,15 +763,21 @@ img { max-width: 100%; height: auto; }
   font-size: 12px;
 }
 
+/* "More projects": always a third of the row, however many there are (full width when narrow) */
 .mini-cards {
+  container-type: inline-size;
   display: flex;
   flex-wrap: wrap;
   gap: 24px 28px;
 }
 
 .mini-card {
-  flex: 1 1 190px;
+  flex: 0 0 100%;
   min-width: 0;
+}
+
+@container (min-width: 560px) {
+  .mini-card { flex-basis: calc((100% - 56px) / 3); }
 }
 
 .mini-card-title {

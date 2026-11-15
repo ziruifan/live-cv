@@ -1,4 +1,5 @@
-{{- /* Article header and cover. Context dict: page, prefix, limit, link (passed to the kicker). */ -}}
+{{- /* Article header and cover (3:2, like the project cards). Context dict: page, prefix, limit,
+       link (passed to the kicker). */ -}}
 {{- $p := .page }}
 <header class="article-head">
   {{ partial "kicker.html" (dict "page" $p "prefix" .prefix "limit" .limit "link" .link) }}
@@ -9,7 +10,7 @@
 </header>
 {{- with partial "func/cover.html" $p }}
 <figure class="article-cover">
-  {{- partial "image.html" (dict "src" .src "alt" .alt "class" "figure-img figure-img--wide" "sizes" "(min-width: 900px) 780px, 100vw" "widths" (slice 640 960 1440 1920) "eager" true) }}
+  {{- partial "image.html" (dict "src" .src "alt" .alt "class" "figure-img" "sizes" "(min-width: 900px) 780px, 100vw" "widths" (slice 640 960 1440 1920) "eager" true) }}
   {{- with .caption }}
   <figcaption>{{ . | markdownify }}</figcaption>
   {{- end }}
